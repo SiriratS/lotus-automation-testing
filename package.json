@@ -1,0 +1,31 @@
+{
+  "name": "lotuss-playwright-automation",
+  "version": "1.0.0",
+  "description": "Playwright automation testing for Lotus's e-commerce website",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:codegen": "playwright codegen https://www.lotuss.com/th"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "e2e"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/http-proxy": "^1.17.17",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1"
+  }
+}

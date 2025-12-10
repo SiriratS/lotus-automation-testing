@@ -1,0 +1,111 @@
+{
+    "code": 200,
+    "message": "success",
+    "data": {
+        "id": 66352,
+        "sku": "72072326",
+        "name": "ซีพี คุโรบูตะ สเต็กหมูหมักพริกไทยดำ 200 กรัม",
+        "urlKey": "cpf-72072326",
+        "stockStatus": "IN_STOCK",
+        "stockOnHand": 9999,
+        "mediaGallery": [
+            {
+                "label": "",
+                "url": "https://o2o-static.lotuss.com/products/107486/72072326.jpg",
+                "types": [
+                    "thumbnail",
+                    "image"
+                ]
+            }
+        ],
+        "sellingType": "qty",
+        "weightPerPiece": 0.2,
+        "quantityIncrement": 1,
+        "minQuantityOfProduct": 1,
+        "maxQuantityOfProduct": 10000,
+        "unitOfWeight": "",
+        "unitOfQuantity": "",
+        "deliveryMethod": [
+            "HD",
+            "HDND",
+            "CCND"
+        ],
+        "deliveryType": [
+            "OD",
+            "SFL"
+        ],
+        "regularPricePerUOW": 99,
+        "finalPricePerUOW": 99,
+        "loyaltyMemberPricePerUOW": 0,
+        "priceRange": {
+            "minimumPrice": {
+                "regularPrice": {
+                    "value": 99,
+                    "currency": "THB",
+                    "currencyPrefix": "฿"
+                },
+                "finalPrice": {
+                    "value": 99,
+                    "currency": "THB",
+                    "currencyPrefix": "฿"
+                },
+                "loyaltyMemberPrice": {
+                    "value": 0,
+                    "currency": "THB",
+                    "currencyPrefix": "฿"
+                },
+                "discount": {
+                    "amountOff": 0,
+                    "percentOff": 0,
+                    "displayNumber": 0,
+                    "displayText": ""
+                }
+            }
+        },
+        "promotions": [],
+        "disableLoyaltyPoints": false,
+        "loyaltyPoints": 0.29,
+        "metaTags": {
+            "metaTitle": "",
+            "metaKeyword": "",
+            "metaDescription": ""
+        },
+        "links": {
+            "category": {
+                "id": 107507,
+                "name": "เนื้อหมูหมักปรุงรส",
+                "urlKey": "pork-marinated"
+            },
+            "brand": {
+                "id": 21136,
+                "name": "CP",
+                "urlKey": "cp"
+            }
+        },
+        "breadcrumb": [
+            {
+                "id": 107486,
+                "name": "เนื้อสัตว์",
+                "urlKey": "meat"
+            },
+            {
+                "id": 107501,
+                "name": "เนื้อหมู",
+                "urlKey": "pork"
+            },
+            {
+                "id": 107507,
+                "name": "เนื้อหมูหมักปรุงรส",
+                "urlKey": "pork-marinated"
+            }
+        ],
+        "tabs": [
+            {
+                "title": "Product Information",
+                "content": "ไทย"
+            }
+        ],
+        "isInstallmentSupport": false,
+        "shareURL": "https://www.lotuss.com/th/product/cpf-72072326?openExternalBrowser=1"
+    }
+}
