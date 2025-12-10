@@ -4,13 +4,13 @@ Comprehensive end-to-end testing framework for the Lotus's e-commerce website us
 
 ## 🚀 Features
 
-- ✅ Product search and selection test cases
-- ✅ Multi-browser testing (Chromium, Firefox, WebKit)
-- ✅ Mobile device testing (iOS & Android)
-- ✅ Three different API mocking strategies
-- ✅ Screenshot and video recording on failures
-- ✅ TypeScript for type safety
-- ✅ Detailed HTML test reports
+- ✅ **Smart Wait Strategies**: Uses `networkidle` and element-specific waits for reliability
+- ✅ **Robust Selectors**: Prioritizes `data-testid` and `data-cta-name-*` attributes
+- ✅ **Helper Class Architecture**: Reusable `PageHelper` and `SearchProductHelper`
+- ✅ **Integrated API Mocking**: Hybrid approach using fixtures within test files
+- ✅ **Media Capture**: Auto-screenshots and videos on failure
+- ✅ **Cross-Browser & Mobile**: Tested on Chromium, Firefox, WebKit, iOS, and Android
+- ✅ **Type-Safe**: Full TypeScript implementation
 
 ## 📋 Prerequisites
 
@@ -29,51 +29,28 @@ Comprehensive end-to-end testing framework for the Lotus's e-commerce website us
    npx playwright install
    ```
 
-   This will download Chromium, Firefox, and WebKit browsers.
-
 ## 🧪 Running Tests
 
-### Run all tests (headless mode)
+### Run all tests (headless)
 ```bash
 npm test
 ```
 
-### Run tests with visible browser
+### Run with visible browser
 ```bash
 npm run test:headed
 ```
 
-### Run tests in UI mode (interactive debugging)
+### Interactive UI Mode (Recommended for debugging)
 ```bash
 npm run test:ui
 ```
+This mode lets you see each step, explore selectors, and view network requests in real-time.
 
-### Run specific test file
+### Run specific test suites
 ```bash
 npx playwright test tests/search-product.spec.ts
-```
-
-### Run tests on specific browser
-```bash
-npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
-```
-
-### Run tests on mobile devices
-```bash
-npx playwright test --project="Mobile Chrome"
-npx playwright test --project="Mobile Safari"
-```
-
-### Debug mode
-```bash
-npm run test:debug
-```
-
-### View test report
-```bash
-npm run test:report
+npx playwright test tests/product-detail.spec.ts
 ```
 
 ## 📁 Project Structure
@@ -81,235 +58,90 @@ npm run test:report
 ```
 automation-testing/
 ├── tests/
-│   ├── search-product.spec.ts          # Main test cases
-│   ├── mocks/
-│   │   ├── route-interception.spec.ts  # API mocking approach 1
-│   │   └── proxy-server.spec.ts        # API mocking approach 3
+│   ├── search-product.spec.ts          # Search & Navigation tests
+│   ├── product-detail.spec.ts          # Product Detail & API Mocking tests
+│   ├── helpers/
+│   │   ├── page-helper.ts              # General page utilities (Dialogs, Cookies)
+│   │   └── search-product-helper.ts    # Search-specific logic
 │   └── fixtures/
-│       └── product-mock-data.json      # Mock API response data
+│       ├── product-normal.json         # Standard product data
+│       ├── product-out-of-stock.json   # Out of stock scenario
+│       ├── product-long-price.json     # Edge case data
+│       └── product-no-image.json       # Missing image scenario
 ├── utils/
-│   └── proxy-server.ts                 # Reusable proxy server utility
-├── playwright.config.ts                # Playwright configuration
-├── tsconfig.json                       # TypeScript configuration
-└── package.json                        # Project dependencies
+│   └── proxy-server.ts                 # Standalone proxy utility
+├── playwright.config.ts                # Configuration
+└── package.json
 ```
 
-## 🎯 Test Cases
+## 🧩 Helper Classes
 
-### 1. Product Search
-Tests searching for "ซีพี คุโรบูตะ สเต็กหมู" on the Lotus's website.
+### PageHelper (`tests/helpers/page-helper.ts`)
+General utilities usable across all tests:
+- `closeAllDialogs(page)`: Closes ads, popups, and cookie banners
+- `closeCookieDialog(page)`: Handles cookie consent specifically
+- `waitForPageLoad(page)`: Combines `domcontentloaded` + `networkidle`
+- `takeScreenshot(page)`: Standardized screenshot capturing
 
-**File:** `tests/search-product.spec.ts`
+### SearchProductHelper (`tests/helpers/search-product-helper.ts`)
+Domain-specific logic for product operations:
+- `searchForProduct(page)`: Handles search interaction and autocomplete
+- `findProductInResults(page)`: Locates specific products in the grid
+- `clickProduct(page)`: Navigates to detail page with verification
 
-```bash
-npx playwright test tests/search-product.spec.ts -g "should search"
-```
+## 🎭 API Mocking Strategy
 
-### 2. Product Selection
-Tests selecting the specific product "ซีพี คุโรบูตะ สเต็กหมูหมักพริกไทยดำ 200 กรัม" from search results.
+We use Playwright's route interception directly within `product-detail.spec.ts` to test various UI states without relying on the live backend data.
 
-**File:** `tests/search-product.spec.ts`
-
-```bash
-npx playwright test tests/search-product.spec.ts -g "should select"
-```
-
-### 3. Complete User Journey
-Tests the full flow: search → select → view product details.
-
-**File:** `tests/search-product.spec.ts`
-
-```bash
-npx playwright test tests/search-product.spec.ts -g "complete full user journey"
-```
-
-## 🎭 API Mocking Strategies
-
-This project demonstrates three different approaches to mock the Lotus's product API:
-
-### Approach 1: Route Interception (Recommended for most cases)
-
-**Pros:** Simple, built-in, no external dependencies  
-**Cons:** Limited to Playwright tests only
-
-**File:** `tests/mocks/route-interception.spec.ts`
-
+**Example from `tests/product-detail.spec.ts`:**
 ```typescript
+import productOutOfStock from './fixtures/product-out-of-stock.json';
+
 await page.route('**/lotuss-mobile-bff/product/v4/product*', async (route) => {
-  await route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify(mockData),
-  });
-});
-```
-
-**Run tests:**
-```bash
-npx playwright test tests/mocks/route-interception.spec.ts
-```
-
-**Features:**
-- ✅ Mock API responses
-- ✅ Modify responses on the fly
-- ✅ Simulate errors (500, 404, etc.)
-- ✅ Simulate slow network
-- ✅ Log all API requests
-
-### Approach 2: Proxy Server (Advanced)
-
-**Pros:** Full control, works with any browser, request logging  
-**Cons:** More complex setup
-
-**File:** `tests/mocks/proxy-server.spec.ts`
-
-**Run tests:**
-```bash
-npx playwright test tests/mocks/proxy-server.spec.ts
-```
-
-**Standalone proxy server:**
-```bash
-npx ts-node utils/proxy-server.ts
-```
-
-Then configure your browser to use proxy: `http://localhost:8888`
-
-## 🔧 Configuration
-
-### Playwright Configuration
-
-Edit `playwright.config.ts` to customize:
-
-- **Timeout:** Change `timeout` value (default: 60000ms)
-- **Browsers:** Enable/disable browsers in `projects` array
-- **Screenshots:** Modify `screenshot` setting
-- **Videos:** Modify `video` setting
-- **Base URL:** Change `baseURL` if testing different environment
-
-### TypeScript Configuration
-
-Edit `tsconfig.json` for TypeScript settings.
-
-## 📸 Screenshots & Videos
-
-- **Screenshots:** Saved to `test-results/screenshots/` on failure
-- **Videos:** Saved to `test-results/` on failure
-- **Traces:** Saved to `test-results/` for debugging
-
-## 🐛 Debugging
-
-### Visual debugging with UI mode
-```bash
-npm run test:ui
-```
-
-### Step-by-step debugging
-```bash
-npm run test:debug
-```
-
-### Generate code with Codegen
-```bash
-npm run test:codegen
-```
-
-This opens a browser where you can interact with the site, and Playwright will generate test code for you!
-
-## 📊 Test Reports
-
-After running tests, view the HTML report:
-
-```bash
-npm run test:report
-```
-
-This opens an interactive report showing:
-- ✅ Passed/failed tests
-- 📸 Screenshots
-- 🎥 Videos
-- 📝 Detailed logs
-- ⏱️ Execution time
-
-## 🔍 Troubleshooting
-
-### Tests are failing with timeout errors
-
-**Solution:** Increase timeout in `playwright.config.ts`:
-```typescript
-timeout: 90000, // Increase to 90 seconds
-```
-
-### Selectors not finding elements
-
-**Solution:** Use Playwright Inspector to find correct selectors:
-```bash
-npm run test:debug
-```
-
-### API mocking not working
-
-**Solution:** Ensure route interception is set up BEFORE navigating to the page:
-```typescript
-await page.route('**/api/**', ...);  // Set up route first
-await page.goto('/product');          // Then navigate
-```
-
-### Proxy server not intercepting requests
-
-**Solution:** Verify proxy configuration in browser context:
-```typescript
-const context = await browser.newContext({
-  proxy: { server: 'http://localhost:8888' }
+    await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(productOutOfStock),
+    });
 });
 ```
 
 ## 📚 Best Practices
 
-1. **Use data-testid attributes** for stable selectors
-2. **Wait for network idle** before assertions: `await page.waitForLoadState('networkidle')`
-3. **Use Page Object Model** for reusable components
-4. **Mock external APIs** to avoid flaky tests
-5. **Take screenshots** at key points for debugging
-6. **Run tests in parallel** for faster execution
-7. **Use TypeScript** for better IDE support and type safety
-
-## 🔗 Useful Links
-
-- [Playwright Documentation](https://playwright.dev/)
-- [Playwright API Reference](https://playwright.dev/docs/api/class-playwright)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
-- [Lotus's Website](https://www.lotuss.com/th)
-
-## 📝 Example: Adding a New Test
-
+### 1. Wait Strategies
+Avoid fixed timeouts (e.g., `waitForTimeout(3000)`). Instead, use smart waits:
 ```typescript
-import { test, expect } from '@playwright/test';
+// ✅ Good
+await page.goto(url, { waitUntil: 'networkidle' });
+await page.locator('h1').waitFor({ state: 'visible' });
 
-test('should add product to cart', async ({ page }) => {
-  // Navigate to product page
-  await page.goto('/th/product/cpf-72072326');
-  
-  // Click add to cart button
-  await page.click('button:has-text("เพิ่มลงตะกร้า")');
-  
-  // Verify cart count increased
-  const cartCount = page.locator('[data-testid="cart-count"]');
-  await expect(cartCount).toHaveText('1');
-});
+// ❌ Avoid
+await page.waitForTimeout(5000);
 ```
 
-## 🤝 Contributing
+### 2. Robust Selectors
+Prefer data attributes over text content which changes with language/design.
+```typescript
+// ✅ Good
+page.locator('button[data-cta-name-en="Add To Cart"]')
 
-1. Create a new branch for your feature
-2. Write tests following existing patterns
-3. Ensure all tests pass: `npm test`
-4. Submit a pull request
+// ⚠️ Risky (Fragile)
+page.locator('text="Add To Cart"')
+```
 
-## 📄 License
+### 3. Handle Dynamic Content
+Use `PageHelper.closeAllDialogs(page)` to handle random popups that block interaction.
 
+## 🐛 Troubleshooting
+
+### Tests failing on CI?
+Ensure `networkidle` is used, as CI networks can be slower. Check `playwright.config.ts` to increase timeouts if necessary.
+
+### Selectors failing?
+Use the Playwright Inspector:
+```bash
+npm run test:debug
+```
+
+## 📜 License
 ISC
-
----
-
-**Happy Testing! 🎉**
