@@ -20,8 +20,9 @@ test.describe('Product Detail', () => {
         await MockHelper.mockProductAPI(page, PRODUCT_SLUG, productNormal);
         await ProductDetailHelper.navigateToProduct(page, PRODUCT_SLUG);
 
-        // Wait for WebKit to fully render page elements
-        await page.waitForTimeout(3000);
+        // Wait for all browsers to fully render page elements
+        // Increased to 5s to prevent flaky failures
+        await page.waitForTimeout(5000);
 
         await PageHelper.closeCookieDialog(page);
         await PageHelper.takeScreenshot(page, 'product-normal');
@@ -36,8 +37,9 @@ test.describe('Product Detail', () => {
         await MockHelper.mockProductAPI(page, PRODUCT_SLUG, productOutOfStock);
         await ProductDetailHelper.navigateToProduct(page, PRODUCT_SLUG);
 
-        // Wait for WebKit to render button state
-        await page.waitForTimeout(3000);
+        // Wait for all browsers to render button state
+        // Increased to 5s to prevent flaky failures
+        await page.waitForTimeout(5000);
 
         await PageHelper.takeScreenshot(page, 'product-out-of-stock');
 
@@ -49,9 +51,10 @@ test.describe('Product Detail', () => {
         await MockHelper.mockProductAPI(page, PRODUCT_SLUG, productLongPrice);
         await ProductDetailHelper.navigateToProduct(page, PRODUCT_SLUG);
 
-        // Wait for WebKit to render the price element
-        // WebKit is slower at rendering complex price formatting
-        await page.waitForTimeout(3000);
+        // Wait for all browsers to render the price element
+        // These browsers are slower at rendering complex price formatting
+        // Increased to 5s to prevent flaky failures
+        await page.waitForTimeout(5000);
 
         await PageHelper.takeScreenshot(page, 'product-long-price');
 

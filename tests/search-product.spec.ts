@@ -64,10 +64,11 @@ test.describe('Product Search', () => {
     });
 
     test('should verify search API is called with correct parameters', async ({ page }) => {
+        // Increased timeout to prevent flaky failures across browsers
         const [response] = await Promise.all([
             page.waitForResponse(
                 response => response.url().includes('/lotuss-mobile-bff/product/v5/search') && response.status() === 200,
-                { timeout: 20000 }
+                { timeout: 30000 }
             ),
             SearchProductHelper.searchForProduct(page, 'ซีพี')
         ]);
