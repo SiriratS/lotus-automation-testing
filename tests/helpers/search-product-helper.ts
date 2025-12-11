@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { PageHelper } from './page-helper';
 
 /**
@@ -7,12 +7,40 @@ import { PageHelper } from './page-helper';
  */
 export class SearchProductHelper {
     /**
+     * Get search input locator
+     * @param page - Playwright page object
+     * @returns Search input locator
+     */
+    static getSearchInput(page: Page): Locator {
+        return page.locator('#search-bar-input');
+    }
+
+    /**
+     * Get product grid item locator
+     * @param page - Playwright page object
+     * @param productName - Full or partial product name
+     * @returns Product grid item locator
+     */
+    static getProductGridItem(page: Page, productName: string): Locator {
+        return page.locator(`.product-grid-item:has-text("${productName}")`).first();
+    }
+
+    /**
+     * Get product link within a product item
+     * @param productItem - Product item locator
+     * @returns Product link locator
+     */
+    static getProductLink(productItem: Locator): Locator {
+        return productItem.locator('a').first();
+    }
+
+    /**
      * Perform a search on Lotus website
      * @param page - Playwright page object
      * @param searchTerm - Term to search for
      */
     static async searchForProduct(page: Page, searchTerm: string): Promise<void> {
-        const searchInput = page.locator('#search-bar-input');
+        const searchInput = this.getSearchInput(page);
         await searchInput.waitFor({ state: 'visible', timeout: 10000 });
 
         await searchInput.fill(searchTerm);
@@ -37,7 +65,7 @@ export class SearchProductHelper {
      * @returns The product item locator
      */
     static async findProductInResults(page: Page, productName: string) {
-        const productItem = page.locator(`.product-grid-item:has-text("${productName}")`).first();
+        const productItem = this.getProductGridItem(page, productName);
         await productItem.waitFor({ state: 'visible', timeout: 15000 });
 
         return productItem;
@@ -53,7 +81,7 @@ export class SearchProductHelper {
         const productItem = await this.findProductInResults(page, productName);
 
         // Find clickable link within the product item
-        const productLink = productItem.locator('a').first();
+        const productLink = this.getProductLink(productItem);
         await productLink.waitFor({ state: 'visible', timeout: 5000 });
 
         const beforeUrl = page.url();
@@ -61,15 +89,5 @@ export class SearchProductHelper {
         await page.waitForTimeout(5000);
 
         return beforeUrl;
-    }
-
-    /**
-     * Verify navigation to product detail page
-     * @param page - Playwright page object
-     * @param previousUrl - URL before navigation
-     */
-    static async verifyProductDetailPage(page: Page, previousUrl: string): Promise<void> {
-        const currentUrl = page.url();
-        expect(currentUrl).not.toBe(previousUrl);
     }
 }

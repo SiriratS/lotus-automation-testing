@@ -24,7 +24,7 @@ test.describe('Product Search', () => {
         await expect(productItem).toBeVisible();
 
         const previousUrl = await SearchProductHelper.clickProduct(page, productName);
-        await SearchProductHelper.verifyProductDetailPage(page, previousUrl);
+        expect(page.url()).not.toBe(previousUrl);
     });
 
     test('should display no results when search returns empty', async ({ page }) => {
