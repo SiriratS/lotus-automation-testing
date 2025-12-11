@@ -2,18 +2,16 @@ import { Page, expect } from '@playwright/test';
 import { PageHelper } from './page-helper';
 
 /**
- * Abstract helper class for product search functionality on Lotus website
+ * Helper class for product search functionality on Lotus website
  * This class encapsulates common search and navigation actions
  */
-export abstract class SearchProductHelper {
+export class SearchProductHelper {
     /**
      * Perform a search on Lotus website
      * @param page - Playwright page object
      * @param searchTerm - Term to search for
      */
     static async searchForProduct(page: Page, searchTerm: string): Promise<void> {
-        console.log(`Searching for: ${searchTerm}`);
-
         const searchInput = page.locator('#search-bar-input');
         await searchInput.waitFor({ state: 'visible', timeout: 10000 });
 
@@ -39,8 +37,6 @@ export abstract class SearchProductHelper {
      * @returns The product item locator
      */
     static async findProductInResults(page: Page, productName: string) {
-        console.log(`Looking for product: ${productName}`);
-
         const productItem = page.locator(`.product-grid-item:has-text("${productName}")`).first();
         await productItem.waitFor({ state: 'visible', timeout: 15000 });
 
@@ -75,7 +71,5 @@ export abstract class SearchProductHelper {
     static async verifyProductDetailPage(page: Page, previousUrl: string): Promise<void> {
         const currentUrl = page.url();
         expect(currentUrl).not.toBe(previousUrl);
-
-        console.log(`✓ Navigated from ${previousUrl} to ${currentUrl}`);
     }
 }

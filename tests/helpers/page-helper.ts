@@ -1,17 +1,15 @@
 import { Page } from '@playwright/test';
 
 /**
- * Abstract helper class for general page-level utilities
+ * Helper class for general page-level utilities
  * Contains reusable functions that can be used across all pages
  */
-export abstract class PageHelper {
+export class PageHelper {
     /**
      * Close all dialogs and popups on the page
      * Useful for dismissing cookie banners, modals, and other overlays
      */
     static async closeAllDialogs(page: Page): Promise<void> {
-        console.log('Closing all dialogs...');
-
         await page.keyboard.press('Escape');
         await page.waitForTimeout(1000);
 
@@ -66,6 +64,5 @@ export abstract class PageHelper {
             path: `test-results/screenshots/${name}.png`,
             fullPage
         });
-        console.log(`📸 Screenshot saved: ${name}.png`);
     }
 }

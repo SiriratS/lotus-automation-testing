@@ -81,8 +81,9 @@ export class ProxyServer {
             }
 
             // Simulate delay if configured
-            if (this.config.delayMs > 0) {
-                await new Promise(resolve => setTimeout(resolve, this.config.delayMs));
+            const delay = this.config.delayMs ?? 0;
+            if (delay > 0) {
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
 
             // Check if this URL should be mocked

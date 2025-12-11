@@ -1,0 +1,20 @@
+{
+    "code": 200,
+    "message": "success",
+    "data": {
+        "products": [],
+        "totalCount": 0,
+        "pageInfo": {
+            "currentPage": 1,
+            "pageSize": 15,
+            "totalPages": 0
+        },
+        "aggregations": [],
+        "sortOptions": [
+            {
+                "label": "ความเกี่ยวข้อง",
+                "value": "relevance:DESC"
+            }
+        ]
+    }
+}
