@@ -53,6 +53,22 @@ npx playwright test tests/search-product.spec.ts
 npx playwright test tests/product-detail.spec.ts
 ```
 
+### View Test Report
+```bash
+npm run test:report
+```
+
+### Export Report to PDF
+After running tests, you can export the HTML report to PDF:
+```bash
+npm run export:pdf
+```
+This will generate `test-report.pdf` in the project root with:
+- Formatted A4 pages with margins
+- Header showing "Playwright Test Report"
+- Footer with page numbers
+- All test results, screenshots, and traces
+
 ## 📁 Project Structure
 
 ```

@@ -9,7 +9,8 @@
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
-    "test:codegen": "playwright codegen https://www.lotuss.com/th"
+    "test:codegen": "playwright codegen https://www.lotuss.com/th",
+    "export:pdf": "tsx scripts/export-report-pdf.ts"
   },
   "keywords": [
     "playwright",
@@ -23,6 +24,7 @@
     "@playwright/test": "^1.48.0",
     "@types/http-proxy": "^1.17.17",
     "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.6.0"
   },
   "dependencies": {

@@ -9,3 +9,4 @@ dist/
 .env
 .env.local
 test-results.json
+test-report.pdf
