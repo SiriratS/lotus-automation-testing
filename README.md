@@ -4,13 +4,12 @@ Comprehensive end-to-end testing framework for the Lotus's e-commerce website us
 
 ## 🚀 Features
 
+- ✅ **Feature-Based Architecture**: Modular structure grouped by domain (Search, Product Detail)
 - ✅ **Smart Wait Strategies**: Uses `networkidle` and element-specific waits for reliability
-- ✅ **Robust Selectors**: Prioritizes `data-testid` and `data-cta-name-*` attributes
-- ✅ **Helper Class Architecture**: Reusable `PageHelper` and `SearchProductHelper`
-- ✅ **Integrated API Mocking**: Hybrid approach using fixtures within test files
-- ✅ **Media Capture**: Auto-screenshots and videos on failure
+- ✅ **Self-Recording Demo Mode**: Automated video recording with slow-motion execution
+- ✅ **Integrated API Mocking**: Native Playwright interception with co-located mock data
+- ✅ **Code Quality**: Strict linting with ESLint and TypeScript
 - ✅ **Cross-Browser & Mobile**: Tested on Chromium, Firefox, WebKit, iOS, and Android
-- ✅ **Type-Safe**: Full TypeScript implementation
 
 ## 📋 Prerequisites
 
@@ -31,6 +30,13 @@ Comprehensive end-to-end testing framework for the Lotus's e-commerce website us
 
 ## 🧪 Running Tests
 
+### 🎥 Run Demo (Best for Presentation)
+Executes tests in **visible mode** with **slow motion** and **records video** automatically.
+```bash
+npm run test:demo
+```
+*Videos will be saved in `test-results/` directory.*
+
 ### Run all tests (headless)
 ```bash
 npm test
@@ -41,16 +47,9 @@ npm test
 npm run test:headed
 ```
 
-### Interactive UI Mode (Recommended for debugging)
+### Interactive UI Mode (Debugging)
 ```bash
 npm run test:ui
-```
-This mode lets you see each step, explore selectors, and view network requests in real-time.
-
-### Run specific test suites
-```bash
-npx playwright test tests/search-product.spec.ts
-npx playwright test tests/product-detail.spec.ts
 ```
 
 ### View Test Report
@@ -58,15 +57,8 @@ npx playwright test tests/product-detail.spec.ts
 npm run test:report
 ```
 
-### Export Report to PDF
-After running tests, you can export the HTML report to PDF:
-```bash
-npm run export:pdf
-```
-- Footer with page numbers
-- All test results, screenshots, and traces
+## 🧹 Code Quality
 
-### Code Quality with ESLint
 Check code quality and style:
 ```bash
 npm run lint
@@ -77,96 +69,64 @@ Auto-fix issues:
 npm run lint:fix
 ```
 
-**Note:** Console warnings in test files are expected for debugging purposes.
-
 ## 📁 Project Structure
 
 ```
 automation-testing/
 ├── tests/
-│   ├── search-product.spec.ts          # Search & Navigation tests
-│   ├── product-detail.spec.ts          # Product Detail & API Mocking tests
-│   ├── helpers/
-│   │   ├── page-helper.ts              # General page utilities (Dialogs, Cookies)
-│   │   └── search-product-helper.ts    # Search-specific logic
-│   └── fixtures/
-│       ├── product-normal.json         # Standard product data
-│       ├── product-out-of-stock.json   # Out of stock scenario
-│       ├── product-long-price.json     # Edge case data
-│       └── product-no-image.json       # Missing image scenario
-├── utils/
-│   └── proxy-server.ts                 # Standalone proxy utility
-├── playwright.config.ts                # Configuration
+│   ├── search-product/             # Feature: Product Search
+│   │   ├── search-product.spec.ts  # Test definitions
+│   │   ├── search-product-helper.ts# Helper logic
+│   │   └── mocks/                  # Co-located mock data
+│   │       └── search-not-found.json
+│   │
+│   ├── product-detail/             # Feature: Product Detail
+│   │   ├── product-detail.spec.ts
+│   │   ├── product-detail-helper.ts
+│   │   └── mocks/
+│   │       ├── product-normal.json
+│   │       ├── product-out-of-stock.json
+│   │       └── ...
+│   │
+│   └── shared/                     # Shared Utilities
+│       ├── page-helper.ts          # Global page actions (Cookies, Dialogs)
+│       └── mock-helper.ts          # API Interception logic
+│
+├── playwright.config.ts            # Main Config
+├── playwright.demo.config.ts       # Demo Mode Config
+├── eslint.config.js                # Linting Config
 └── package.json
 ```
 
-## 🧩 Helper Classes
+## 🧩 Shared Helpers
 
-### PageHelper (`tests/helpers/page-helper.ts`)
+### PageHelper (`tests/shared/page-helper.ts`)
 General utilities usable across all tests:
 - `closeAllDialogs(page)`: Closes ads, popups, and cookie banners
 - `closeCookieDialog(page)`: Handles cookie consent specifically
 - `waitForPageLoad(page)`: Combines `domcontentloaded` + `networkidle`
 - `takeScreenshot(page)`: Standardized screenshot capturing
 
-### SearchProductHelper (`tests/helpers/search-product-helper.ts`)
-Domain-specific logic for product operations:
-- `searchForProduct(page)`: Handles search interaction and autocomplete
-- `findProductInResults(page)`: Locates specific products in the grid
-- `clickProduct(page)`: Navigates to detail page with verification
-
-## 🎭 API Mocking Strategy
-
-We use Playwright's route interception directly within `product-detail.spec.ts` to test various UI states without relying on the live backend data.
-
-**Example from `tests/product-detail.spec.ts`:**
-```typescript
-import productOutOfStock from './fixtures/product-out-of-stock.json';
-
-await page.route('**/lotuss-mobile-bff/product/v4/product*', async (route) => {
-    await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(productOutOfStock),
-    });
-});
-```
+### MockHelper (`tests/shared/mock-helper.ts`)
+Centralizer API interception logic:
+- `mockProductAPI(page, slug, data)`: Mocks product detail responses
+- `mockSearchAPI(page, data)`: Mocks search results
 
 ## 📚 Best Practices
 
 ### 1. Wait Strategies
-Avoid fixed timeouts (e.g., `waitForTimeout(3000)`). Instead, use smart waits:
+Avoid fixed timeouts. Use smart waits:
 ```typescript
 // ✅ Good
 await page.goto(url, { waitUntil: 'networkidle' });
 await page.locator('h1').waitFor({ state: 'visible' });
-
-// ❌ Avoid
-await page.waitForTimeout(5000);
 ```
 
 ### 2. Robust Selectors
-Prefer data attributes over text content which changes with language/design.
+Prefer data attributes:
 ```typescript
 // ✅ Good
 page.locator('button[data-cta-name-en="Add To Cart"]')
-
-// ⚠️ Risky (Fragile)
-page.locator('text="Add To Cart"')
-```
-
-### 3. Handle Dynamic Content
-Use `PageHelper.closeAllDialogs(page)` to handle random popups that block interaction.
-
-## 🐛 Troubleshooting
-
-### Tests failing on CI?
-Ensure `networkidle` is used, as CI networks can be slower. Check `playwright.config.ts` to increase timeouts if necessary.
-
-### Selectors failing?
-Use the Playwright Inspector:
-```bash
-npm run test:debug
 ```
 
 ## 📜 License
