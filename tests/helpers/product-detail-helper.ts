@@ -24,9 +24,8 @@ export class ProductDetailHelper {
         await page.locator('h1, [data-testid="product-name"]').waitFor({ state: 'visible', timeout: 10000 });
         await page.locator('text=/฿/').first().waitFor({ state: 'visible', timeout: 10000 });
 
-        // Additional wait for dynamic content
+        // Wait for dynamic content to load
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(2000);
     }
 
     /**
@@ -85,14 +84,17 @@ export class ProductDetailHelper {
      */
     static async isOutOfStock(page: Page): Promise<boolean> {
         const outOfStockIndicator = this.getOutOfStockIndicator(page);
-        const isVisible = await outOfStockIndicator.isVisible({ timeout: 5000 }).catch(() => false);
+        const isVisible = await outOfStockIndicator.isVisible({ timeout: 7000 }).catch(() => false);
 
         if (isVisible) {
             return true;
         }
 
-        // Check if add to cart button is disabled
         const addButton = this.getAddToCartButton(page).first();
+
+        // Wait for button to be visible (Firefox and WebKit need this)
+        await addButton.waitFor({ state: 'visible', timeout: 7000 }).catch(() => { });
+
         const isDisabled = await addButton.isDisabled().catch(() => true);
         return isDisabled;
     }

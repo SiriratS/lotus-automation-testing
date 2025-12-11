@@ -44,17 +44,19 @@ export class SearchProductHelper {
         await searchInput.waitFor({ state: 'visible', timeout: 10000 });
 
         await searchInput.fill(searchTerm);
-        await page.waitForTimeout(1000);
 
         // Close autocomplete dropdown
         await searchInput.press('Escape');
-        await page.waitForTimeout(500);
 
         // Submit search
         await searchInput.press('Enter');
-        await page.waitForTimeout(5000);
 
-        // Close any dialogs that appear after search
+        // Wait for search navigation to complete
+        // Using waitForTimeout here because the website's search uses JavaScript navigation
+        // and the URL pattern varies, making waitForURL unreliable
+        // 10 seconds to accommodate slower browsers (WebKit, Firefox) and mobile devices
+        await page.waitForTimeout(10000);
+
         await PageHelper.closeAllDialogs(page);
     }
 
@@ -80,13 +82,14 @@ export class SearchProductHelper {
     static async clickProduct(page: Page, productName: string): Promise<string> {
         const productItem = await this.findProductInResults(page, productName);
 
-        // Find clickable link within the product item
         const productLink = this.getProductLink(productItem);
         await productLink.waitFor({ state: 'visible', timeout: 5000 });
 
         const beforeUrl = page.url();
         await productLink.click();
-        await page.waitForTimeout(5000);
+
+        // Wait for navigation to complete
+        await page.waitForLoadState('networkidle');
 
         return beforeUrl;
     }

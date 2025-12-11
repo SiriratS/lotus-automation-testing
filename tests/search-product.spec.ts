@@ -8,7 +8,6 @@ test.describe('Product Search', () => {
 
     test.beforeEach(async ({ page }) => {
         await page.goto('/th');
-        await page.waitForTimeout(2000);
     });
 
     test('should search, find product, and navigate to details', async ({ page }) => {
@@ -28,30 +27,25 @@ test.describe('Product Search', () => {
     });
 
     test('should display no results when search returns empty', async ({ page }) => {
-        // Mock the search API to return empty results
         await MockHelper.mockSearchAPI(page, searchNotFoundResponse);
 
-        // Perform search
         const searchInput = page.locator('#search-bar-input');
         await searchInput.waitFor({ state: 'visible', timeout: 10000 });
         await searchInput.fill('nonexistentproduct12345');
-        await searchInput.press('Escape'); // Close autocomplete
-        await page.waitForTimeout(500);
+        await searchInput.press('Escape');
         await searchInput.press('Enter');
-        await page.waitForTimeout(3000);
 
-        // Verify we're on search results page
+        await page.waitForURL('**/search/**', { timeout: 10000 });
+
         const currentUrl = page.url();
         expect(currentUrl).toContain('/search/');
 
         await PageHelper.closeAllDialogs(page);
 
-        // Verify no products are displayed
         const productItems = page.locator('.product-grid-item');
         const count = await productItems.count();
         expect(count).toBe(0);
 
-        // Try to find "no results" message
         const possibleNoResultsMessages = [
             page.locator('text=/ไม่พบสินค้า/i'),
             page.locator('text=/no.*results/i'),
@@ -70,25 +64,15 @@ test.describe('Product Search', () => {
     });
 
     test('should verify search API is called with correct parameters', async ({ page }) => {
-        let apiCalled = false;
-        let apiUrl = '';
+        const [response] = await Promise.all([
+            page.waitForResponse(
+                response => response.url().includes('/lotuss-mobile-bff/product/v5/search') && response.status() === 200,
+                { timeout: 20000 }
+            ),
+            SearchProductHelper.searchForProduct(page, 'ซีพี')
+        ]);
 
-        // Listen for API calls
-        page.on('request', (request) => {
-            const url = request.url();
-            if (url.includes('/lotuss-mobile-bff/product/v5/search')) {
-                apiCalled = true;
-                apiUrl = url;
-            }
-        });
-
-        // Perform search
-        await SearchProductHelper.searchForProduct(page, 'ซีพี');
-
-        // Wait for API call
-        await page.waitForTimeout(2000);
-
-        // Verify API was called
-        expect(apiCalled).toBe(true);
+        expect(response.url()).toContain('/lotuss-mobile-bff/product/v5/search');
+        expect(response.status()).toBe(200);
     });
 });

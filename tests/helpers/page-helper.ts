@@ -11,7 +11,6 @@ export class PageHelper {
      */
     static async closeAllDialogs(page: Page): Promise<void> {
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(1000);
 
         await this.closeCookieDialog(page);
 
@@ -23,13 +22,11 @@ export class PageHelper {
                 const btn = closeButtons.nth(i);
                 if (await btn.isVisible({ timeout: 500 }).catch(() => false)) {
                     await btn.click();
-                    await page.waitForTimeout(1000);
                 }
             }
         }
 
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(500);
     }
 
     /**
@@ -40,7 +37,6 @@ export class PageHelper {
         const cookieButton = page.locator('button:has-text("ยอมรับคุกกี้ทั้งหมด")');
         if (await cookieButton.isVisible({ timeout: 2000 }).catch(() => false)) {
             await cookieButton.click();
-            await page.waitForTimeout(1000);
         }
     }
 
