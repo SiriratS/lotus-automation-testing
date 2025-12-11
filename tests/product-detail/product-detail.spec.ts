@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import productNormal from './fixtures/product-normal.json';
-import productOutOfStock from './fixtures/product-out-of-stock.json';
-import productLongPrice from './fixtures/product-long-price.json';
-import productNoImage from './fixtures/product-no-image.json';
-import { PageHelper } from './helpers/page-helper';
-import { MockHelper } from './helpers/mock-helper';
-import { ProductDetailHelper } from './helpers/product-detail-helper';
+import productNormal from './mocks/product-normal.json';
+import productOutOfStock from './mocks/product-out-of-stock.json';
+import productLongPrice from './mocks/product-long-price.json';
+import productNoImage from './mocks/product-no-image.json';
+import { PageHelper } from '../shared/page-helper';
+import { MockHelper } from '../shared/mock-helper';
+import { ProductDetailHelper } from './product-detail-helper';
 
 /**
  * Test Suite: Product Detail Page

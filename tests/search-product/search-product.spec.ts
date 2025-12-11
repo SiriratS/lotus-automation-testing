@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { SearchProductHelper } from './helpers/search-product-helper';
-import searchNotFoundResponse from './fixtures/search-not-found.json';
-import { PageHelper } from './helpers/page-helper';
-import { MockHelper } from './helpers/mock-helper';
+import { SearchProductHelper } from './search-product-helper';
+import searchNotFoundResponse from './mocks/search-not-found.json';
+import { PageHelper } from '../shared/page-helper';
+import { MockHelper } from '../shared/mock-helper';
 
 test.describe('Product Search', () => {
 

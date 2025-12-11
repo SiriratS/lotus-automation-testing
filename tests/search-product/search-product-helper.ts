@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { PageHelper } from './page-helper';
+import { PageHelper } from '../shared/page-helper';
 
 /**
  * Helper class for product search functionality on Lotus website
