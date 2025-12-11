@@ -10,7 +10,9 @@
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
     "test:codegen": "playwright codegen https://www.lotuss.com/th",
-    "export:pdf": "tsx scripts/export-report-pdf.ts"
+    "test:demo": "playwright test --config=playwright.demo.config.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "keywords": [
     "playwright",
@@ -21,13 +23,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@playwright/test": "^1.48.0",
-    "@types/http-proxy": "^1.17.17",
     "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-playwright": "^2.4.0",
     "tsx": "^4.21.0",
     "typescript": "^5.6.0"
   },
-  "dependencies": {
-    "http-proxy": "^1.18.1"
-  }
+  "dependencies": {}
 }

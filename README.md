@@ -63,11 +63,21 @@ After running tests, you can export the HTML report to PDF:
 ```bash
 npm run export:pdf
 ```
-This will generate `test-report.pdf` in the project root with:
-- Formatted A4 pages with margins
-- Header showing "Playwright Test Report"
 - Footer with page numbers
 - All test results, screenshots, and traces
+
+### Code Quality with ESLint
+Check code quality and style:
+```bash
+npm run lint
+```
+
+Auto-fix issues:
+```bash
+npm run lint:fix
+```
+
+**Note:** Console warnings in test files are expected for debugging purposes.
 
 ## 📁 Project Structure
 
